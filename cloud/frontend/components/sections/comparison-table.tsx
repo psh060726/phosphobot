@@ -53,7 +53,7 @@ export default function ComparisonTable() {
   const renderFeatureValue = (value: boolean | string) => {
     if (typeof value === "boolean") {
       return value ? (
-        <Check className="w-5 h-5 text-green-500" />
+        <Check className="w-5 h-5 text-primary" />
       ) : (
         <X className="w-5 h-5 text-medium-gray" />
       );
