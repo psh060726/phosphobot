@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+
+    /* 🔥 PRIMARY = 보라색 */
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 262 40% 96%;
+    --secondary-foreground: 262 83% 20%;
+
+    --muted: 262 30% 95%;
+    --muted-foreground: 262 15% 40%;
+
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 262 20% 85%;
+    --input: 262 20% 85%;
+    --ring: 262 83% 58%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 262 30% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 262 30% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 262 30% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    /* 🔥 PRIMARY = 보라색 (다크) */
+    --primary: 262 83% 68%;
+    --primary-foreground: 262 30% 10%;
+
+    --secondary: 262 30% 18%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 262 30% 18%;
+    --muted-foreground: 262 15% 65%;
+
+    --accent: 262 83% 68%;
+    --accent-foreground: 262 30% 10%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 262 30% 25%;
+    --input: 262 30% 25%;
+    --ring: 262 83% 68%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* 모든 아이콘 기본 색 */
+  svg {
+    color: hsl(var(--primary));
+  }
+
+  /* muted 아이콘 (비활성) */
+  .text-muted-foreground svg {
+    color: hsl(var(--muted-foreground));
+  }
+}
+@layer components {
+  .icon-hover {
+    transition: transform 0.15s ease, color 0.15s ease;
+  }
+
+  .icon-hover:hover {
+    transform: scale(1.1);
+    color: hsl(var(--primary));
+  }
+}
