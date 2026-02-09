@@ -95,7 +95,7 @@ export function CalibrationSequence() {
               If you have a <b>"Access is denied" error on Windows,</b> a common
               workaround is to{" "}
               <a
-                href="https://docs.phospho.ai/installation#windows-wsl"
+                https://roboseasy.github.io//installation#windows-wsl"
                 target="_blank"
                 className="underline"
               >
@@ -268,10 +268,10 @@ export function CalibrationSequence() {
         calibrationStatus === "in_progress") && (
         <Alert
           variant={"default"}
-          className={`mb-6 ${calibrationStatus === "success" ? " border-green-500 border-2" : ""}`}
+          className={`mb-6 ${calibrationStatus === "success" ? " border-primary border-2" : ""}`}
         >
           {calibrationStatus === "success" ? (
-            <CheckCircle className="h-5 w-5 text-green-500" />
+            <CheckCircle className="h-5 w-5 text-primary" />
           ) : (
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           )}

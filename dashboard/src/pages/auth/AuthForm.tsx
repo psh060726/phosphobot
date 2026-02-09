@@ -8,22 +8,31 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export function AuthForm() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const { login, signup } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  // Determine the title based on the current path
+  // 페이지 제목
   const getTitle = () => {
     if (location.pathname.includes("sign-in")) {
-      return "Sign in to your phosphobot account";
+      return "Sign in to Roboseasy";
     }
     if (location.pathname.includes("sign-up")) {
-      return "Create a new phosphobot account";
+      return "Create your Roboseasy account";
     }
+    return "Welcome to Roboseasy";
+  };
+
+  const getSubtitle = () => {
+    if (location.pathname.includes("sign-up")) {
+      return "Create an account to control robots and train AI easily.";
+    }
+    return "Easy robot control & AI training platform.";
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -36,78 +45,80 @@ export function AuthForm() {
       return;
     }
 
-    if (location.pathname.includes("sign-up")) {
-      try {
+    try {
+      if (location.pathname.includes("sign-up")) {
         await signup(email, password);
         toast.success(
-          "Account created! Please check your email for email validation code.",
+          "Account created! Please check your email for the confirmation code.",
         );
         navigate(`/sign-up/confirm?email=${encodeURIComponent(email)}`, {
           replace: true,
         });
-      } catch (signupErr) {
-        console.error(signupErr);
+        return;
       }
-      setIsLoading(false);
-      return;
-    }
 
-    if (location.pathname.includes("sign-in")) {
-      try {
+      if (location.pathname.includes("sign-in")) {
         await login(email, password);
-        toast.success("Logged in successfully!");
+        toast.success("Welcome back to Roboseasy!");
         navigate(from, { replace: true });
-      } catch (loginErr) {
-        console.error(loginErr);
+        return;
       }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
       setIsLoading(false);
-      return;
     }
   };
 
   return (
-    <div className="flex items-center justify-center bg-muted">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-center">
+    <div className="flex min-h-screen items-center justify-center bg-purple-50 px-4">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="space-y-2">
+          {/* 브랜드 */}
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-purple-700">
+              Roboseasy
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {getSubtitle()}
+            </p>
+          </div>
+
+          {/* 페이지 제목 */}
+          <CardTitle className="text-center text-xl font-semibold pt-4">
             {getTitle()}
           </CardTitle>
-          <p className="text-sm text-muted-foreground text-center">
-            {location.pathname.includes("sign-up") &&
-              "Create an account to enable the AI features in phosphobot."}
-          </p>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+
+        <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <Input
-              key="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
-              className="border p-2 rounded"
               required
               disabled={isLoading}
             />
+
             <Input
-              key="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="border p-2 rounded"
               required
               disabled={isLoading}
             />
+
             <Button
               type="submit"
-              variant="outline"
-              className="w-full"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="size-5 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 size-5 animate-spin" />
                   Processing...
                 </>
               ) : (
@@ -115,27 +126,33 @@ export function AuthForm() {
               )}
             </Button>
           </form>
-          <p className="text-sm text-muted-foreground text-center">
+
+          <div className="mt-4 space-y-2 text-center text-sm text-muted-foreground">
             <a
               href="/auth/forgot-password"
-              className="underline cursor-pointer"
+              className="underline hover:text-purple-600"
             >
               Forgot password?
             </a>
-          </p>
-          <p className="text-sm text-muted-foreground text-center">
-            {location.pathname.includes("sign-in")
-              ? "Don't have an account?"
-              : "Already have an account?"}{" "}
-            <a
-              href={
-                location.pathname.includes("sign-in") ? "/sign-up" : "/sign-in"
-              }
-              className="underline cursor-pointer"
-            >
-              {location.pathname.includes("sign-in") ? "Sign Up" : "Sign In"}
-            </a>
-          </p>
+
+            <div>
+              {location.pathname.includes("sign-in")
+                ? "Don't have an account?"
+                : "Already have an account?"}{" "}
+              <a
+                href={
+                  location.pathname.includes("sign-in")
+                    ? "/sign-up"
+                    : "/sign-in"
+                }
+                className="underline hover:text-purple-600"
+              >
+                {location.pathname.includes("sign-in")
+                  ? "Sign up"
+                  : "Sign in"}
+              </a>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

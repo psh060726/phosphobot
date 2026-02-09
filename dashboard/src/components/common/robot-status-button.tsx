@@ -153,7 +153,7 @@ function RobotStatusMenuItem({
                 }`}
               />
               {leaderArmSerialIds.includes(robotUsbPort) && (
-                <Crown className="absolute -top-2 -right-2 size-3 text-green-500" />
+                <Crown className="absolute -top-2 -right-2 size-3 text-primary" />
               )}
             </div>
             <div className="flex flex-col items-start mr-1">
@@ -535,7 +535,7 @@ export function RobotStatusDropdown() {
                       />
                       {robot.device_name &&
                         leaderArmSerialIds.includes(robot.device_name) && (
-                          <Crown className="absolute -top-2 -right-2 size-3 text-green-500" />
+                          <Crown className="absolute -top-2 -right-2 size-3 text-primary" />
                         )}
                     </div>
                   );

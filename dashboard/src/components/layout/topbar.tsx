@@ -38,11 +38,7 @@ const routeMap = [
   { path: "/docs", title: "API Documentation" },
   { path: "/viz", title: "Camera Overview" },
   { path: "/network", title: "Network Management" },
-  {
-    path: "/browse",
-    title: "Browse Datasets",
-    isPrefix: true,
-  },
+  { path: "/browse", title: "Browse Datasets", isPrefix: true },
 ];
 
 function ServerIP() {
@@ -50,9 +46,7 @@ function ServerIP() {
     fetcher(url),
   );
 
-  if (!serverStatus) {
-    return null;
-  }
+  if (!serverStatus) return null;
 
   return (
     <TooltipProvider>
@@ -63,7 +57,7 @@ function ServerIP() {
           </span>
         </TooltipTrigger>
         <TooltipContent>
-          <p className="max-w-xs">{serverStatus.name}</p>
+          <p>{serverStatus.name}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -71,158 +65,55 @@ function ServerIP() {
 }
 
 function RecordingStatus() {
-  // Pulsating recording red circle when recording is active
-  // Nothing when recording is inactive
-  // Tooltip with recording status when hovered
   const { data: serverStatus } = useSWR<ServerStatus>(["/status"], ([url]) =>
     fetcher(url),
   );
 
-  if (!serverStatus) {
-    return null;
-  }
+  if (!serverStatus || !serverStatus.is_recording) return null;
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span className="text-xs text-muted-foreground cursor-pointer">
-            {serverStatus.is_recording ? (
-              <span className="relative inline-block">
-                <span className="animate-ping absolute inline-flex size-3 rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full size-3 bg-red-500"></span>
-              </span>
-            ) : (
-              <></>
-            )}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="max-w-xs">
-            {serverStatus.is_recording ? "Recording" : "Not Recording"}
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <span className="relative inline-block">
+      <span className="animate-ping absolute inline-flex size-3 rounded-full bg-red-400 opacity-75"></span>
+      <span className="relative inline-flex rounded-full size-3 bg-red-500"></span>
+    </span>
   );
 }
 
-export function AIControlStatus() {
-  // AI Control status badge
-  // Display a green pulsating BrainCircuit icon when AI is running. When you click on it, it takes you to the /inference page
-  // Tooltip with AI status when hovered
+function AIControlStatus() {
   const { data: serverStatus } = useSWR<ServerStatus>(["/status"], ([url]) =>
     fetcher(url),
   );
 
-  if (!serverStatus) {
-    return null;
-  }
+  if (!serverStatus || serverStatus.ai_running_status !== "running") return null;
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span className="text-xs text-muted-foreground cursor-pointer">
-            {serverStatus.ai_running_status === "running" && (
-              // Link to AI Control page
-              <a href="/inference">
-                <span className="relative inline-block">
-                  <span className="animate-ping absolute inline-flex size-5 rounded-full bg-green-400 opacity-75"></span>
-                  <BrainCircuit className="size-5 text-green" />
-                </span>
-              </a>
-            )}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="max-w-xs">
-            AI Control status: {serverStatus.ai_running_status}
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <a href="/inference">
+      <span className="relative inline-block">
+        <span className="animate-ping absolute inline-flex size-5 rounded-full bg-green-400 opacity-75"></span>
+        <BrainCircuit className="size-5 text-primary" />
+      </span>
+    </a>
   );
 }
 
-export function AccountTopBar() {
+function AccountTopBar() {
   const { session, proUser, logout } = useAuth();
-
-  // Get first letter of email for avatar
-  const getInitial = (email: string) => {
-    return email ? email.charAt(0).toUpperCase() : "U";
-  };
-
-  if (!session) {
-    return null;
-  }
+  if (!session) return null;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="relative cursor-pointer pr-1">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {getInitial(session.user_email)}
-            </AvatarFallback>
-          </Avatar>
-          {/* Badge overlay */}
-          <div
-            className={`absolute -bottom-2 -right-3 px-1 py-0.5 font-extrabold rounded-sm outline-[0.5px] outline-white font- ${
-              proUser
-                ? "bg-black text-green-500 text-[10px]"
-                : "bg-gray-200 text-black text-[10px]"
-            }`}
-          >
-            {proUser ? "PRO" : "FREE"}
-          </div>
-        </div>
+        <Avatar className="h-8 w-8 cursor-pointer">
+          <AvatarFallback className="bg-purple-600 text-white">
+            {session.user_email[0].toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem className="text-sm text-muted-foreground">
-          <div className="flex flex-col gap-y-1">
-            <div>{session.user_email}</div>
-            <div>{proUser ? "Pro User" : "Free User"}</div>
-          </div>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        {!proUser && (
-          <DropdownMenuItem asChild>
-            <a
-              href="https://phospho.ai/pro?utm_source=phosphobot_app"
-              className="flex items-center"
-              target="_blank"
-            >
-              <TestTubeDiagonal className="mr-1 size-4 text-green-500" />
-              Upgrade to Pro
-            </a>
-          </DropdownMenuItem>
-        )}
-        {proUser && (
-          <DropdownMenuItem asChild>
-            <a
-              href="https://billing.phospho.ai/p/login/bIYdRr5xq8BhdagbII"
-              className="flex items-center"
-              target="_blank"
-            >
-              <TestTubeDiagonal className="mr-1 size-4 text-green-500" />
-              Manage your subscription
-            </a>
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem asChild>
-          <a
-            href="mailto:contact@phospho.ai"
-            className="flex items-center"
-            target="_blank"
-          >
-            <Mail className="mr-1 h-4 w-4" />
-            Contact us
-          </a>
-        </DropdownMenuItem>
+        <DropdownMenuItem disabled>{session.user_email}</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout}>
-          <LogOut className="mr-1 h-4 w-4" />
+          <LogOut className="mr-2 h-4 w-4" />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -232,73 +123,58 @@ export function AccountTopBar() {
 
 export function TopBar() {
   const currentPath = window.location.pathname;
-  const { session } = useAuth();
   const navigate = useNavigate();
+  const { session } = useAuth();
 
   const matchedRoute = routeMap.find(({ path, isPrefix }) =>
     isPrefix ? currentPath.startsWith(path) : currentPath === path,
   );
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex flex-col md:flex-row justify-between items-center gap-4 p-4 bg-background border-b">
-      {currentPath === "/" && (
-        <div className="flex-1">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-green-500">
-            phosphobot
-          </h1>
-        </div>
-      )}
-      {currentPath !== "/" && (
-        <div className="flex-1">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-green-500">
-            {matchedRoute?.title ?? "phosphobot"}
-          </h1>
-        </div>
-      )}
+    <div className="fixed top-0 left-0 right-0 z-50 flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-purple-50 border-b border-purple-200">
+      {/* 브랜드 영역 */}
+      <div className="flex-1">
+        <h1 className="text-3xl md:text-4xl font-bold text-purple-700">
+          Roboseasy
+        </h1>
+        {matchedRoute?.title && (
+          <span className="text-sm text-muted-foreground">
+            {matchedRoute.title}
+          </span>
+        )}
+      </div>
 
-      <div className="flex items-center gap-2 md:w-auto">
-        {/* Back button on mobile */}
+      {/* 오른쪽 버튼들 */}
+      <div className="flex items-center gap-2">
         <MobileMenu />
         <ServerIP />
         <AIControlStatus />
         <RecordingStatus />
         <RobotStatusDropdown />
+
         <Button variant="outline" asChild>
           <a
-            href="https://docs.phospho.ai/welcome"
-            className="flex items-center gap-1 text-sm"
+            href="https://roboseasy.github.io/"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer"
           >
-            <BookText className="size-5" />
-            Documentation
+            <BookText className="size-4 mr-1" />
+            Docs
           </a>
         </Button>
+
         <ThemeToggle />
-        <div className="flex items-center gap-2">
-          {session ? (
-            <AccountTopBar />
-          ) : (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  navigate("/sign-in");
-                }}
-              >
-                Sign in
-              </Button>
-              <Button
-                variant="default"
-                onClick={() => {
-                  navigate("/sign-up");
-                }}
-              >
-                Sign up
-              </Button>
-            </div>
-          )}
-        </div>
+
+        {session ? (
+          <AccountTopBar />
+        ) : (
+          <>
+            <Button variant="ghost" onClick={() => navigate("/sign-in")}>
+              Sign in
+            </Button>
+            <Button onClick={() => navigate("/sign-up")}>Sign up</Button>
+          </>
+        )}
       </div>
     </div>
   );

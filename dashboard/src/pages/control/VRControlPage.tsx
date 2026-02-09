@@ -144,7 +144,7 @@ export function VRControl() {
                   <div className="flex flex-wrap gap-3">
                     <Button asChild variant="outline">
                       <a
-                        href="https://docs.phospho.ai/examples/teleop"
+                        https://roboseasy.github.io//examples/teleop"
                         target="_blank"
                         rel="noopener noreferrer"
                       >

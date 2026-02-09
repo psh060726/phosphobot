@@ -687,7 +687,7 @@ export function GamepadControl() {
           <div className="flex flex-col items-center space-y-4">
             <div className="flex items-center gap-2">
               <Gamepad2
-                className={`size-8 ${gamepadConnected ? "text-green-500" : "text-gray-400"}`}
+                className={`size-8 ${gamepadConnected ? "text-primary" : "text-gray-400"}`}
               />
               <span className="text-lg font-semibold">
                 {gamepadConnected
